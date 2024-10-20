@@ -1,0 +1,32 @@
+[
+    {
+        "messages": [
+            {
+                "content": "Identify the brand name, product type, and product description in the image. Additionally, provide the expiry date, manufacturing date, quantity, and price if these details are available.",
+                "role": "user"
+            },
+            {
+                "content": "Brand: Pepsi, Product Type: Soft Drink, Product Description: A carbonated cola-flavored soft drink, known for its refreshing taste and caffeine content. Best served chilled. Quantity: 750 ml, Expiry Date: Not visible, Manufacturing Date: Not visible.",
+                "role": "assistant"
+            }
+        ],
+        "images": [
+            "/kaggle/input/flipkart-final-dataset/IMG_5080.jpg"
+        ]
+    },
+    {
+        "messages": [
+            {
+                "content": "Identify the brand name, product type, and product description in the image. Additionally, provide the expiry date, manufacturing date, quantity, and price if these details are available.",
+                "role": "user"
+            },
+            {
+                "content": "Brand: Coca-Cola, Product Type: Soft Drink, Product Description: A classic cola-flavored carbonated drink, known for its refreshing and crisp taste. Best served chilled. Quantity: 750 ml, Expiry Date: 29/12/24, Manufacturing Date: 30/08/24.",
+                "role": "assistant"
+            }
+        ],
+        "images": [
+            "/kaggle/input/flipkart-final-dataset/IMG_5078.jpg"
+        ]
+    }
+]
