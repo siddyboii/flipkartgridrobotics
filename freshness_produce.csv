@@ -1,0 +1,94 @@
+Timestamp,Produce,Freshness,Freshness Index,Estimated Shelf Life
+2024-12-11 15:53:09,apple,extreme freshness,8,around 7 days
+2024-12-11 15:53:11,apple,extreme freshness,7,around 7 days
+2024-12-11 15:53:13,apple,extreme freshness,9,around 7 days
+2024-12-11 15:53:15,apple,extreme freshness,9,around 7 days
+2024-12-11 15:53:17,apple,unknown,-1,Unknown shelf life
+2024-12-11 15:53:21,apple,unknown,-1,Unknown shelf life
+2024-12-11 15:53:22,apple,unknown,-1,Unknown shelf life
+2024-12-11 15:53:24,apple,extreme freshness,8,around 7 days
+2024-12-11 15:53:26,apple,unknown,-1,Unknown shelf life
+2024-12-11 15:53:27,unknown,unknown,-1,Unknown shelf life
+2024-12-11 15:53:30,apple,extreme freshness,7,around 7 days
+2024-12-11 15:53:32,apple,extreme freshness,7,around 7 days
+2024-12-11 15:53:34,banana,worse,2,less than 2 days
+2024-12-11 15:53:37,unknown,mild freshness,6,Unknown shelf life
+2024-12-11 15:53:40,banana,mild freshness,4,around 2-3 days
+2024-12-11 15:53:42,banana,mild freshness,4,around 2-3 days
+2024-12-11 15:53:45,banana,worse,2,less than 2 days
+2024-12-11 15:53:48,banana,worse,3,less than 2 days
+2024-12-11 15:53:50,unknown,mild freshness,5,Unknown shelf life
+2024-12-11 15:53:53,banana,mild freshness,6,around 2-3 days
+2024-12-11 15:53:56,banana,mild freshness,6,around 2-3 days
+2024-12-11 15:53:59,banana,worse,1,less than 2 days
+2024-12-11 15:54:02,banana,extreme freshness,8,around 4 days
+2024-12-11 15:54:05,banana,mild freshness,5,around 2-3 days
+2024-12-11 15:54:07,orange,extreme freshness,8,around 7 days
+2024-12-11 15:54:10,orange,mild freshness,4,around 2-3 days
+2024-12-11 15:54:12,orange,mild freshness,6,around 2-3 days
+2024-12-11 15:54:15,orange,mild freshness,6,around 2-3 days
+2024-12-11 15:54:17,orange,extreme freshness,8,around 7 days
+2024-12-11 15:54:19,unknown,mild freshness,4,Unknown shelf life
+2024-12-11 15:54:21,unknown,mild freshness,6,Unknown shelf life
+2024-12-11 15:54:24,unknown,mild freshness,4,Unknown shelf life
+2024-12-11 15:54:26,orange,extreme freshness,9,around 7 days
+2024-12-11 15:54:28,unknown,worse,1,Unknown shelf life
+2024-12-11 15:54:31,banana,mild freshness,4,around 2-3 days
+2024-12-11 15:54:33,unknown,worse,2,Unknown shelf life
+2024-12-11 15:54:36,unknown,extreme freshness,8,Unknown shelf life
+2024-12-11 15:54:40,banana,worse,2,less than 2 days
+2024-12-11 15:54:43,unknown,worse,3,Unknown shelf life
+2024-12-11 15:54:45,banana,worse,1,less than 2 days
+2024-12-11 15:54:47,banana,mild freshness,4,around 2-3 days
+2024-12-11 15:54:50,unknown,worse,1,Unknown shelf life
+2024-12-11 15:54:53,unknown,extreme freshness,8,Unknown shelf life
+2024-12-11 15:54:55,unknown,mild freshness,4,Unknown shelf life
+2024-12-11 15:54:58,banana,worse,2,less than 2 days
+2024-12-11 15:55:00,banana,worse,3,less than 2 days
+2024-12-11 15:55:02,banana,worse,2,less than 2 days
+2024-12-11 15:55:04,potato,worse,1,less than 3 days
+2024-12-11 15:55:07,banana,worse,1,less than 2 days
+2024-12-11 15:55:09,banana,worse,3,less than 2 days
+2024-12-11 15:55:11,potato,worse,2,less than 3 days
+2024-12-11 15:55:13,unknown,worse,3,Unknown shelf life
+2024-12-11 15:55:16,banana,worse,3,less than 2 days
+2024-12-11 15:55:19,unknown,worse,2,Unknown shelf life
+2024-12-11 15:55:21,guava,worse,1,less than 2 days
+2024-12-11 15:55:23,banana,worse,1,less than 2 days
+2024-12-11 15:55:26,unknown,worse,3,Unknown shelf life
+2024-12-11 15:55:28,orange,mild freshness,6,around 2-3 days
+2024-12-11 15:55:30,orange,worse,3,less than 1 days
+2024-12-11 15:55:33,orange,mild freshness,4,around 2-3 days
+2024-12-11 15:55:36,unknown,mild freshness,5,Unknown shelf life
+2024-12-11 15:55:39,unknown,mild freshness,6,Unknown shelf life
+2024-12-11 15:55:40,orange,worse,2,less than 1 days
+2024-12-11 15:55:43,unknown,worse,3,Unknown shelf life
+2024-12-11 15:55:44,orange,extreme freshness,9,around 7 days
+2024-12-11 15:55:46,unknown,extreme freshness,7,Unknown shelf life
+2024-12-11 15:55:48,apple,worse,2,less than 1 days
+2024-12-11 15:55:50,unknown,extreme freshness,7,Unknown shelf life
+2024-12-11 15:55:52,potato,extreme freshness,9,around 45-60 days
+2024-12-11 15:55:55,unknown,extreme freshness,9,Unknown shelf life
+2024-12-11 15:55:57,pomegranate,worse,2,less than 2 days
+2024-12-11 15:55:59,pomegranate,worse,1,less than 2 days
+2024-12-11 15:56:01,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:04,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:06,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:08,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:10,orange,worse,1,less than 1 days
+2024-12-11 15:56:13,pomegranate,worse,2,less than 2 days
+2024-12-11 15:56:15,orange,worse,3,less than 1 days
+2024-12-11 15:56:17,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:19,pomegranate,worse,3,less than 2 days
+2024-12-11 15:56:21,unknown,worse,3,Unknown shelf life
+2024-12-11 15:56:23,strawberry,worse,3,less than 1 days
+2024-12-11 15:56:25,strawberry,worse,3,less than 1 days
+2024-12-11 15:56:27,strawberry,worse,2,less than 1 days
+2024-12-11 15:56:30,strawberry,worse,3,less than 1 days
+2024-12-11 15:56:32,strawberry,mild freshness,4,around 2-3 days
+2024-12-11 15:56:35,unknown,extreme freshness,9,Unknown shelf life
+2024-12-11 15:56:38,strawberry,mild freshness,5,around 2-3 days
+2024-12-11 15:56:40,strawberry,worse,3,less than 1 days
+2024-12-11 15:56:42,unknown,worse,3,Unknown shelf life
+2024-12-11 15:56:45,unknown,mild freshness,5,Unknown shelf life
+2024-12-11 15:56:48,strawberry,mild freshness,5,around 2-3 days
