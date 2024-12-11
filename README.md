@@ -2,22 +2,27 @@
 
 VIDEO_SUBMISSION_WITH_EXPLAINATION [here](https://drive.google.com/drive/folders/1TlvhGWoAjPB170CmmnP5PZn4FtJTxol0?usp=sharing).
 
-This project combines the power of two advanced models—YOLO for object detection and Qwen for image captioning and information extraction—to identify products in an image and extract key details about them. The application provides a user-friendly interface using Gradio, allowing users to upload images and receive annotated outputs with detailed product information.
 
-# To run the code for product descripter, follow these steps: 
+This repository implements state-of-the-art AI techniques for produce freshness detection and real-time product descriptor identification. It utilizes models like Qwen-2B and a fine-tuned CLIP for efficient processing.
 
-Run infrence_Final_UI.ipynb.
-Load the YOLO and QWEEN models.
-Execute the last block in the notebook to launch the Gradio interface for uploading images.
+## Files Overview
 
-# To run the code for freshness, follow these steps: 
+### 1. **Freshness Prediction Classification** (`freshness_prediction_classificationv2.ipynb`)
+- **Purpose**: Classifies produce as **fresh** or **rotten** using a fine-tuned CLIP model.
+- **Use Case**: Bulk image datasets for inventory management.
 
-Run infrence_final_freshness_UI.ipynb.
-Load the YOLO and QWEEN models.
-Execute the last block in the notebook to launch the Gradio interface for uploading images.
+### 2. **Live Produce Freshness Detection** (`live_produce_freshness_v2.ipynb`)
+- **Purpose**: Detects freshness levels such as **extreme freshness**, **mild freshness**, or **worse** in real-time using Qwen-2B.
+- **Use Case**: Live webcam feeds for detecting freshness of produce.
+- **Outputs**: Produce, Freshness index, shelf life estimation.
 
-# To run the code for video input, follow these steps: 
+### 3. **Live Product Descriptor** (`live_product_descriptor_v2.py`)
+- **Purpose**: Extracts product details like **brand name** and **expiry date** in real-time from conveyor belt setups using Qwen-2B.
+- **Use Case**: Real time Product Information retrieval.
+- **Outputs**: Brand Name, Expiry Date, Item Count, Expiry status and remaining lifespan in days.
 
-Run video_ifrence_final_UI.ipynb.
-Load the YOLO and QWEEN models.
-Execute the last block in the notebook to launch the Gradio interface for uploading images.
+## Technologies Used
+- **YOLO**: Object detection.
+- **Qwen-2B**: Image and text understanding.
+- **Fine-tuned CLIP**: Static image classification.
+- **Python Libraries**: `torch`, `transformers`, `cv2`, `csv`, `Pillow`.
