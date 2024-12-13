@@ -1,7 +1,10 @@
 import os
 import cv2
 import time
+import csv
+import re
 import gradio as gr
+from datetime import datetime
 from PIL import Image
 import torch
 from ultralytics import YOLO
@@ -10,7 +13,8 @@ from qwen_vl_utils import process_vision_info
 
 # Model and directories
 output_cropped_dir = 'saved_frames'  # Output directory for cropped frames
-#adapter_path = "/teamspace/studios/this_studio/newdescripterckp/checkpoint-241"
+output_csv_path = 'inference_results.csv'  # CSV file for saving results
+adapter_path = "newdescripterckp/checkpoint-241"
 model_path = "best.pt"
 threshold = 0.4
 
@@ -24,13 +28,21 @@ model = Qwen2VLForConditionalGeneration.from_pretrained(
     attn_implementation="flash_attention_2",
     device_map="auto"
 )
-processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-2B-Instruct", max_pixels=1080*28*28)
+#processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-2B-Instruct", max_pixels=1080*28*28)
+processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-2B-Instruct", cache_dir="newdescripterckp", max_pixels=720*28*28)
+model.load_adapter(adapter_path)
 
 # Ensure output directories exist
 if not os.path.exists(output_cropped_dir):
     os.makedirs(output_cropped_dir)
 
-# Function to reduce bounding box and mask
+# Create or initialize CSV
+if not os.path.exists(output_csv_path):
+    with open(output_csv_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Sl no', 'Timestamp', 'Brand', 'Expiry date', 'Count', 'Expired', 'Expected life span (Days)'])
+
+# Function to reduce bounding box
 def reduce_bounding_box(x1, y1, x2, y2, reduction_factor=0.05):
     width = x2 - x1
     height = y2 - y1
@@ -39,6 +51,71 @@ def reduce_bounding_box(x1, y1, x2, y2, reduction_factor=0.05):
     x2_new = x2 - int(reduction_factor * width)
     y2_new = y2 - int(reduction_factor * height)
     return x1_new, y1_new, x2_new, y2_new
+
+# Function to calculate lifespan
+def calculate_lifespan(expiry_date):
+    try:
+        expiry_datetime = datetime.strptime(expiry_date, "%m/%y")  # Parse expiry date
+        current_datetime = datetime.now()
+        lifespan = (expiry_datetime - current_datetime).days
+        return lifespan if lifespan > 0 else "Expired"
+    except ValueError:
+        return "Invalid date"
+
+# Enhanced Regex Patterns for Parsing
+def parse_qwen_output(output_text):
+    # Updated patterns
+    brand_pattern = r"Brand:\s*([\w\s'\-]+)"  # Matches "Brand: Nestle" or "Brand: Nestle's"
+    expiry_pattern = r"Expiry\s*Date:\s*(\d{1,2}/\d{2}(?:\d{2})?|(?:\d{1,2}\s)?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s\d{2,4})"
+
+    # Match brand
+    brand_match = re.search(brand_pattern, output_text)
+    brand = brand_match.group(1).strip() if brand_match else "Unknown"
+
+    # Match expiry date
+    expiry_match = re.search(expiry_pattern, output_text)
+    expiry_date = expiry_match.group(1).strip() if expiry_match else "Unknown"
+
+    # Normalize expiry date for consistent processing
+    if expiry_date != "Unknown":
+        expiry_date = normalize_expiry_date(expiry_date)
+
+    return brand, expiry_date
+
+
+# Normalize Expiry Date for Consistent Lifespan Calculation
+def normalize_expiry_date(expiry_date):
+    try:
+        # Handle MM/YY and MM/YYYY
+        if re.match(r"^\d{1,2}/\d{2,4}$", expiry_date):
+            if len(expiry_date.split("/")[-1]) == 2:  # MM/YY
+                return datetime.strptime(expiry_date, "%m/%y").strftime("%m/%y")
+            else:  # MM/YYYY
+                return datetime.strptime(expiry_date, "%m/%Y").strftime("%m/%Y")
+
+        # Handle DD/MM/YY or DD/MM/YYYY
+        elif re.match(r"^\d{1,2}/\d{1,2}/\d{2,4}$", expiry_date):
+            if len(expiry_date.split("/")[-1]) == 2:  # DD/MM/YY
+                return datetime.strptime(expiry_date, "%d/%m/%y").strftime("%m/%y")
+            else:  # DD/MM/YYYY
+                return datetime.strptime(expiry_date, "%d/%m/%Y").strftime("%m/%Y")
+
+        # Handle written formats (e.g., "December 2023", "12 Dec 2023")
+        elif re.match(r"^(?:\d{1,2}\s)?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s\d{2,4}$", expiry_date, re.IGNORECASE):
+            return datetime.strptime(expiry_date, "%d %b %Y").strftime("%m/%Y") if expiry_date[0].isdigit() else datetime.strptime(expiry_date, "%b %Y").strftime("%m/%Y")
+
+        return "Invalid Format"  # If no format matches
+    except ValueError:
+        return "Invalid Format"
+
+
+# Function to append to CSV
+def append_to_csv(timestamp, brand, expiry_date, object_count):
+    lifespan = calculate_lifespan(expiry_date)
+    expired = "Yes" if lifespan == "Expired" else "No"
+    with open(output_csv_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([object_count, timestamp, brand, expiry_date, 1, expired, lifespan])
 
 # Function to process each object and run Qwen inference
 def process_cropped_object(cropped_pil_image, frame_count, object_count):
@@ -66,31 +143,23 @@ def process_cropped_object(cropped_pil_image, frame_count, object_count):
     # Generate output from the Qwen model
     generated_ids = model.generate(**inputs, max_new_tokens=128)
     generated_ids_trimmed = [out_ids[len(in_ids):] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)]
-    output_text = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+    output_text = processor.batch_decode(generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
 
-    # Format the output nicely for each object
-    formatted_output = (
-        f"Inference Output for Frame {frame_count}, Object {object_count}:\n"
-        f"----------------------------------------------------\n"
-        f"{output_text[0]}\n"
-        f"----------------------------------------------------\n"
-    )
+    # Parse the output and append to CSV
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    brand, expiry_date = parse_qwen_output(output_text)
+    append_to_csv(timestamp, brand, expiry_date, object_count)
 
-    # Print the output after every inference
-    print(formatted_output)
+    return output_text
 
-    return formatted_output
-
-# Gradio function to process live feed and display results dynamically
-def process_live_feed_with_threshold():
+# Gradio function to process live feed
+def process_live_feed_with_csv():
     cap = cv2.VideoCapture(1)  # Open webcam feed (0 for default camera)
     if not cap.isOpened():
         return "Error: Could not access webcam."
 
     inference_results = ""
     frame_count = 0
-    last_detection_time = time.time()
-    detection_occurred = False
 
     while True:
         ret, frame = cap.read()
@@ -98,18 +167,16 @@ def process_live_feed_with_threshold():
             break
 
         frame_count += 1
-        object_count = 0  # Reset object count for the current frame
+        object_count = 0
         current_inference = ""
 
         # Run YOLO on the frame and process detected objects
         results = yolo_model(frame)[0]
-        current_frame_detections = []
 
         for result in results.boxes.data.tolist():
             x1, y1, x2, y2, score, class_id = result
             if score > threshold:
                 object_count += 1
-                current_frame_detections.append((x1, y1, x2, y2))
 
                 # Reduce bounding box
                 x1_new, y1_new, x2_new, y2_new = reduce_bounding_box(x1, y1, x2, y2)
@@ -117,24 +184,8 @@ def process_live_feed_with_threshold():
                 cropped_pil_image = Image.fromarray(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
 
                 # Run Qwen inference and collect results
-                current_inference += process_cropped_object(cropped_pil_image, frame_count, object_count)
+                current_inference += process_cropped_object(cropped_pil_image, frame_count, object_count) + "\n"
 
-        # Check if detections occurred
-        if current_frame_detections:
-            detection_occurred = True
-            last_detection_time = time.time()  # Update last detection time
-        else:
-            # If no detection for the threshold time, process last frame
-            if detection_occurred and time.time() - last_detection_time > detection_threshold_time:
-                detection_occurred = False  # Reset flag
-                for x1, y1, x2, y2 in current_frame_detections:
-                    cropped_image = frame[int(y1):int(y2), int(x1):int(x2)]
-                    cropped_pil_image = Image.fromarray(cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB))
-
-                    # Run Qwen inference for the saved detections
-                    current_inference += process_cropped_object(cropped_pil_image, frame_count, object_count)
-
-        # Append current inference results to the overall results
         inference_results += current_inference
 
         # Update the Gradio UI
@@ -145,13 +196,14 @@ def process_live_feed_with_threshold():
 
 # Gradio UI
 with gr.Blocks() as demo:
-    gr.Markdown("## Live Video Inference with YOLO and Qwen (Time-Threshold-Based Processing)")
+    gr.Markdown("## Live Video Inference with YOLO and Qwen")
 
     video_output = gr.Video(label="Live Video Feed")
     output_textbox = gr.Textbox(label="Inference Output", interactive=False)
 
     submit_button = gr.Button("Start Inference")
-    submit_button.click(process_live_feed_with_threshold, inputs=None, outputs=[video_output, output_textbox])
+    submit_button.click(process_live_feed_with_csv, inputs=None, outputs=[video_output, output_textbox])
 
 # Launch Gradio UI
 demo.launch(share=True)
+
